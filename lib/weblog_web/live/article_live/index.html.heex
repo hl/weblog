@@ -12,7 +12,7 @@
   rows={@streams.articles}
   row_click={fn {_id, article} -> JS.navigate(~p"/articles/#{article}") end}
 >
-  <:col :let={{_id, article}} label="Path"><%= article.path %></:col>
+  <:col :let={{_id, article}} label="Slug"><%= article.slug %></:col>
   <:col :let={{_id, article}} label="Content"><%= article.content %></:col>
   <:action :let={{_id, article}}>
     <div class="sr-only">
@@ -30,7 +30,12 @@
   </:action>
 </.table>
 
-<.modal :if={@live_action in [:new, :edit]} id="article-modal" show on_cancel={JS.patch(~p"/articles")}>
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="article-modal"
+  show
+  on_cancel={JS.patch(~p"/articles")}
+>
   <.live_component
     module={WeblogWeb.ArticleLive.FormComponent}
     id={@article.id || :new}

@@ -2,7 +2,7 @@ defmodule WeblogWeb.ArticleLiveTest do
   use WeblogWeb.ConnCase
 
   import Phoenix.LiveViewTest
-  import Weblog.BlogFixtures
+  import Weblog.ArticleFixtures
 
   @create_attrs %{path: "some path", content: "some content"}
   @update_attrs %{path: "some updated path", content: "some updated content"}

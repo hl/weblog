@@ -9,13 +9,18 @@
 </.header>
 
 <.list>
-  <:item title="Path"><%= @article.path %></:item>
+  <:item title="Slug"><%= @article.slug %></:item>
   <:item title="Content"><%= @article.content %></:item>
 </.list>
 
 <.back navigate={~p"/articles"}>Back to articles</.back>
 
-<.modal :if={@live_action == :edit} id="article-modal" show on_cancel={JS.patch(~p"/articles/#{@article}")}>
+<.modal
+  :if={@live_action == :edit}
+  id="article-modal"
+  show
+  on_cancel={JS.patch(~p"/articles/#{@article}")}
+>
   <.live_component
     module={WeblogWeb.ArticleLive.FormComponent}
     id={@article.id}

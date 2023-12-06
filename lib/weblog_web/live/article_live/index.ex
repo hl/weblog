@@ -1,12 +1,13 @@
 defmodule WeblogWeb.ArticleLive.Index do
   use WeblogWeb, :live_view
 
-  alias Weblog.Blog
-  alias Weblog.Blog.Article
+  require Ecto.Query
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :articles, Blog.list_articles())}
+    query = Ecto.Query.from(Weblog.Article, order_by: [desc: :inserted_at])
+
+    {:ok, stream(socket, :articles, Weblog.Repo.all(query))}
   end
 
   @impl true
@@ -17,13 +18,13 @@ defmodule WeblogWeb.ArticleLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Article")
-    |> assign(:article, Blog.get_article!(id))
+    |> assign(:article, Weblog.Repo.get!(Article, id))
   end
 
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:page_title, "New Article")
-    |> assign(:article, %Article{})
+    |> assign(:article, %Weblog.Article{})
   end
 
   defp apply_action(socket, :index, _params) do
@@ -39,8 +40,8 @@ defmodule WeblogWeb.ArticleLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    article = Blog.get_article!(id)
-    {:ok, _} = Blog.delete_article(article)
+    article = Weblog.Repo.get!(Article, id)
+    {:ok, _} = Weblog.Repo.delete(article)
 
     {:noreply, stream_delete(socket, :articles, article)}
   end

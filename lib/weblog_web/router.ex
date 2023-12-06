@@ -32,7 +32,8 @@ defmodule WeblogWeb.Router do
   scope "/", WeblogWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/:slug", ArticleLive.Public, :show
+    live "/", ArticleLive.Public, :index
   end
 
   defp basic_auth(conn, _opts) do

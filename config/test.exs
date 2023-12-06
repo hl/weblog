@@ -17,9 +17,6 @@ config :weblog, WeblogWeb.Endpoint,
   secret_key_base: "fIElUDPKPHEOYVl76Bvo6pU0cEcQtCaaeWj9CAKgDh3htwvzsSmIyHm6pJG3XAp5",
   server: false
 
-# In test we don't send emails.
-config :weblog, Weblog.Mailer, adapter: Swoosh.Adapters.Test
-
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
 

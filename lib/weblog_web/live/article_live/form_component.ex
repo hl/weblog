@@ -1,8 +1,6 @@
 defmodule WeblogWeb.ArticleLive.FormComponent do
   use WeblogWeb, :live_component
 
-  alias Weblog.Blog
-
   @impl true
   def render(assigns) do
     ~H"""
@@ -19,8 +17,8 @@ defmodule WeblogWeb.ArticleLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:path]} type="text" label="Path" />
-        <.input field={@form[:content]} type="text" label="Content" />
+        <.input field={@form[:slug]} type="text" label="Slug" />
+        <.input field={@form[:content]} type="textarea" label="Content" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Article</.button>
         </:actions>
@@ -31,7 +29,7 @@ defmodule WeblogWeb.ArticleLive.FormComponent do
 
   @impl true
   def update(%{article: article} = assigns, socket) do
-    changeset = Blog.change_article(article)
+    changeset = Weblog.Article.changeset(article, %{})
 
     {:ok,
      socket
@@ -43,7 +41,7 @@ defmodule WeblogWeb.ArticleLive.FormComponent do
   def handle_event("validate", %{"article" => article_params}, socket) do
     changeset =
       socket.assigns.article
-      |> Blog.change_article(article_params)
+      |> Weblog.Article.changeset(article_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign_form(socket, changeset)}
@@ -54,7 +52,9 @@ defmodule WeblogWeb.ArticleLive.FormComponent do
   end
 
   defp save_article(socket, :edit, article_params) do
-    case Blog.update_article(socket.assigns.article, article_params) do
+    changeset = Weblog.Article.changeset(socket.assigns.article, article_params)
+
+    case Weblog.Repo.update(changeset) do
       {:ok, article} ->
         notify_parent({:saved, article})
 
@@ -69,7 +69,9 @@ defmodule WeblogWeb.ArticleLive.FormComponent do
   end
 
   defp save_article(socket, :new, article_params) do
-    case Blog.create_article(article_params) do
+    changeset = Weblog.Article.changeset(socket.assigns.article, article_params)
+
+    case Weblog.Repo.insert(changeset) do
       {:ok, article} ->
         notify_parent({:saved, article})
 
